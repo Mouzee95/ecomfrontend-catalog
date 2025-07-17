@@ -28,19 +28,27 @@ function App() {
     setSearchItem(event.target.value);
   };
   const handleSortChange = (event) => {
-    setSearchItem(event.target.value);
+    setSortOrder(event.target.value);
   };
-    const handleCategorySelect = (categoryId) => {
+  const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId ? Number(categoryId) : null);
   };
 
-  const filteredProducts = products.filter(product =>{
-    return ((selectedCategory ? product.category.id === selectedCategory : true))
-  });
+  const filteredProducts = products.filter(product => {
+    return ((selectedCategory ? product.category?.id === selectedCategory : true))
+      && product.name.toLowerCase().includes(searchItem.toLowerCase());
+  })
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.price - b.price;
+      }else{
+        return b.price - a.price;
+      }
+    });
 
 
   return (
-    <div className="container">
+    <div className="container bg-color text-white p-4">
       <h1 className="my-4">Product List</h1>
       <div className="row align-items mb-3">
         <div className='col-md-4 col-sm-12 mb-2'>
@@ -59,7 +67,7 @@ function App() {
       </div>
       <div>
         {products.length ? (
-          <ProductList products={products} />
+          <ProductList products={filteredProducts} />
         ) : (
           <p>No products available</p>
         )}
